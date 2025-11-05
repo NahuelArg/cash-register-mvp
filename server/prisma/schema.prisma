@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+model User {
+  id                String          @id @default(uuid())
+  email             String          @unique
+  password          String
+  name              String
+  createdAt         DateTime        @default(now())
+  
+  cashRegisters     CashRegister[]
+  movements         CashMovement[]
+  closings          CashClosing[]
+}
+
+model CashRegister {
+  id              String          @id @default(uuid())
+  userId          String
+  user            User            @relation(fields: [userId], references: [id])
+  
+  status          String          @default("CLOSED") // OPEN, CLOSED
+  balance         Float           @default(0)
+  openedAt        DateTime
+  closedAt        DateTime?
+  
+  movements       CashMovement[]
+  closings        CashClosing[]
+  
+  createdAt       DateTime        @default(now())
+}
+
+model CashMovement {
+  id              String          @id @default(uuid())
+  cashRegisterId  String
+  cashRegister    CashRegister    @relation(fields: [cashRegisterId], references: [id])
+  
+  type            String          // OPENING, SALE, EXPENSE
+  amount          Float
+  paymentMethod   String          // CASH, CARD, TRANSFER
+  description     String?
+  category        String?
+  
+  createdById     String
+  createdBy       User            @relation(fields: [createdById], references: [id])
+  createdAt       DateTime        @default(now())
+}
+
+model CashClosing {
+  id              String          @id @default(uuid())
+  cashRegisterId  String
+  cashRegister    CashRegister    @relation(fields: [cashRegisterId], references: [id])
+  
+  expectedBalance Float
+  actualBalance   Float
+  difference      Float
+  notes           String?
+  
+  closedById      String
+  closedBy        User            @relation(fields: [closedById], references: [id])
+  closedAt        DateTime        @default(now())
+}
