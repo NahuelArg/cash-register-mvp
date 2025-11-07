@@ -9,8 +9,8 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { CashRegisterService } from './cash-register.service';
-import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
-import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { JwtAuthGuard } from '../cash-register/common/guards/jwt.guard';
+import { CurrentUser } from '../cash-register/common/decorators/current-user.decorator';
 import {
   OpenCashDto,
   CreateMovementDto,
