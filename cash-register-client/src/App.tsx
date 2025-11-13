@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuthStore } from './store/authStore'
 import { Login } from './pages/Login'
+import { Register } from './pages/Register'
 import { CashRegister } from './pages/CashRegister'
 import './index.css'
 
@@ -26,6 +27,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/auth/register" element={<Register />} />
+        <Route path="/register" element={<Register />} />
         <Route
           path="/"
           element={
