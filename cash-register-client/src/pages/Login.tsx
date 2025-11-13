@@ -72,7 +72,7 @@ export const Login: React.FC = () => {
 
                 <p className="text-center text-gray-600 mt-6">
                     ¿No tienes cuenta?{' '}
-                    <Link to="/auth/register" className="text-blue-600 hover:underline font-medium">
+                    <Link to="/register" className="text-blue-600 hover:underline font-medium">
                         Registrarse
                     </Link>
                 </p>

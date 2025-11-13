@@ -27,17 +27,15 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/auth/register" element={<Register />} />
         <Route path="/register" element={<Register />} />
         <Route
-          path="/"
           element={
             <ProtectedRoute>
               <CashRegister />
             </ProtectedRoute>
           }
         />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   );
