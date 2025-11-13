@@ -20,7 +20,7 @@ export const Register: React.FC = () => {
 
         try {
             await register(email, name, password);
-            navigate('/');
+            setTimeout(() => navigate('/login', { replace: true }), 100)
         } catch {
             // Error manejado por el store
         }

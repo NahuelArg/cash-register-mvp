@@ -12,7 +12,7 @@ export const Login: React.FC = () => {
         e.preventDefault();
         try {
             await login(email, password);
-            navigate('/');
+            navigate('/cash-register');
         } catch {
             // Error manejado por el store
         }
