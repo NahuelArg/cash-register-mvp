@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { useCashStore } from '../store/cashStore';
 
-export const TransactionForm: React.FC = () => {
-    const [type, setType] = useState<'SALE' | 'EXPENSE'>('SALE');
+interface TransactionFormProps {
+    type: "INCOME" | "EXPENSE";
+}
+
+export const TransactionForm: React.FC<TransactionFormProps> = ({ type }) => {
     const [amount, setAmount] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('CASH');
     const [description, setDescription] = useState('');
@@ -16,7 +19,7 @@ export const TransactionForm: React.FC = () => {
         try {
             await createMovement(
                 cash.id,
-                type,
+                type === 'INCOME' ? 'SALE' : 'EXPENSE',
                 parseFloat(amount),
                 paymentMethod,
                 description,
@@ -30,14 +33,16 @@ export const TransactionForm: React.FC = () => {
         }
     };
 
+    const [transactionType, setTransactionType] = useState<"INCOME" | "EXPENSE">(type);
+
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
             {/* Type Selection */}
             <div className="grid grid-cols-2 gap-2">
                 <button
                     type="button"
-                    onClick={() => setType('SALE')}
-                    className={`py-2 px-3 rounded-lg font-medium transition ${type === 'SALE'
+                    onClick={() => setTransactionType('INCOME')}
+                    className={`py-2 px-3 rounded-lg font-medium transition ${transactionType === 'INCOME'
                             ? 'bg-green-600 text-white'
                             : 'bg-gray-200 text-gray-800'
                         }`}
@@ -46,7 +51,7 @@ export const TransactionForm: React.FC = () => {
                 </button>
                 <button
                     type="button"
-                    onClick={() => setType('EXPENSE')}
+                    onClick={() => setTransactionType('EXPENSE')}
                     className={`py-2 px-3 rounded-lg font-medium transition ${type === 'EXPENSE'
                             ? 'bg-red-600 text-white'
                             : 'bg-gray-200 text-gray-800'

@@ -1,9 +1,17 @@
-import React, { useEffect } from 'react';
+import  { useEffect } from 'react';
 import { useCashStore } from '../store/cashStore';
+import { OpenCashForm } from './OpenCashForm';
+import { TransactionForm } from './TransactionForm';
+import { HistoryList } from './HistoryList';
+import { ClosingForm } from './ClosingForm';
 
 export const CashDashboard = () => {
-    const { balance, isOpen, movements, fetchStatus } = useCashStore();
-
+    const { isOpen, balance, movements, fetchStatus } = useCashStore((state) => ({
+        isOpen: state.cash?.isOpen ?? false,
+        balance: state.cash?.balance ?? 0,
+        movements: state.cash?.movements ?? [],
+        fetchStatus: state.getStatus,
+    }));
     useEffect(() => {
         fetchStatus();
     }, []);
@@ -35,7 +43,7 @@ export const CashDashboard = () => {
             <HistoryList movements={movements} />
 
             {/* BOTÓN CERRAR */}
-            <ClosingForm />
+            <ClosingForm cashId="1" currentBalance={balance} />
         </div>
     );
 };
