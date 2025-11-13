@@ -9,8 +9,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 model User {
   id                String          @id @default(uuid())
@@ -28,45 +29,53 @@ model CashRegister {
   id              String          @id @default(uuid())
   userId          String
   user            User            @relation(fields: [userId], references: [id])
-  
+
   status          String          @default("CLOSED") // OPEN, CLOSED
   balance         Float           @default(0)
   openedAt        DateTime
   closedAt        DateTime?
-  
+
   movements       CashMovement[]
   closings        CashClosing[]
-  
+
   createdAt       DateTime        @default(now())
+
+  @@index([userId])
 }
 
 model CashMovement {
   id              String          @id @default(uuid())
   cashRegisterId  String
   cashRegister    CashRegister    @relation(fields: [cashRegisterId], references: [id])
-  
+
   type            String          // OPENING, SALE, EXPENSE
   amount          Float
   paymentMethod   String          // CASH, CARD, TRANSFER
   description     String?
   category        String?
-  
+
   createdById     String
   createdBy       User            @relation(fields: [createdById], references: [id])
   createdAt       DateTime        @default(now())
+
+  @@index([cashRegisterId])
+  @@index([createdById])
 }
 
 model CashClosing {
   id              String          @id @default(uuid())
   cashRegisterId  String
   cashRegister    CashRegister    @relation(fields: [cashRegisterId], references: [id])
-  
+
   expectedBalance Float
   actualBalance   Float
   difference      Float
   notes           String?
-  
+
   closedById      String
   closedBy        User            @relation(fields: [closedById], references: [id])
   closedAt        DateTime        @default(now())
+
+  @@index([cashRegisterId])
+  @@index([closedById])
 }
