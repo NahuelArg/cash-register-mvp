@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useCashStore } from '../store/cashStore';
 
 interface ClosingFormProps {
@@ -13,9 +13,41 @@ export const ClosingForm: React.FC<ClosingFormProps> = ({
     const [actualBalance, setActualBalance] = useState(currentBalance.toString());
     const [notes, setNotes] = useState('');
     const [isOpen, setIsOpen] = useState(false);
-    const { closeCash, isLoading, error } = useCashStore();
+    const { closeCash, isLoading, error, cash } = useCashStore();
 
     const difference = parseFloat(actualBalance) - currentBalance;
+
+    // Calculate payment method breakdown from current movements
+    const paymentBreakdown = useMemo(() => {
+        if (!cash?.movements) return null;
+
+        const sales = cash.movements.filter(m => m.type === 'SALE');
+        const breakdown = {
+            cash: 0,
+            card: 0,
+            transfer: 0,
+            mixed: 0,
+        };
+
+        sales.forEach(sale => {
+            switch (sale.paymentMethod) {
+                case 'CASH':
+                    breakdown.cash += sale.amount;
+                    break;
+                case 'CARD':
+                    breakdown.card += sale.amount;
+                    break;
+                case 'TRANSFER':
+                    breakdown.transfer += sale.amount;
+                    break;
+                case 'MIXED':
+                    breakdown.mixed += sale.amount;
+                    break;
+            }
+        });
+
+        return breakdown;
+    }, [cash?.movements]);
 
     const handleClose = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -43,6 +75,39 @@ export const ClosingForm: React.FC<ClosingFormProps> = ({
     return (
         <form onSubmit={handleClose} className="space-y-4 p-6 bg-red-50 border border-red-200 rounded-lg">
             <h3 className="text-xl font-bold text-gray-900">Cierre de Caja</h3>
+
+            {/* Payment Method Breakdown */}
+            {paymentBreakdown && (
+                <div className="bg-white p-4 rounded border border-gray-200">
+                    <h4 className="text-sm font-semibold text-gray-700 mb-3">Desglose por Método de Pago</h4>
+                    <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-green-50 p-2 rounded">
+                            <p className="text-xs text-gray-600">💵 Efectivo</p>
+                            <p className="text-lg font-bold text-green-700">
+                                €{paymentBreakdown.cash.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                            </p>
+                        </div>
+                        <div className="bg-blue-50 p-2 rounded">
+                            <p className="text-xs text-gray-600">💳 Tarjeta</p>
+                            <p className="text-lg font-bold text-blue-700">
+                                €{paymentBreakdown.card.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                            </p>
+                        </div>
+                        <div className="bg-purple-50 p-2 rounded">
+                            <p className="text-xs text-gray-600">🏦 Transferencia</p>
+                            <p className="text-lg font-bold text-purple-700">
+                                €{paymentBreakdown.transfer.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                            </p>
+                        </div>
+                        <div className="bg-orange-50 p-2 rounded">
+                            <p className="text-xs text-gray-600">🔀 Mixto</p>
+                            <p className="text-lg font-bold text-orange-700">
+                                €{paymentBreakdown.mixed.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Expected Balance */}
             <div className="bg-white p-3 rounded border border-gray-200">

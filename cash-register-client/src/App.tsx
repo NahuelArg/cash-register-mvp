@@ -4,6 +4,7 @@ import { useAuthStore } from './store/authStore'
 import { Login } from './pages/Login'
 import { Register } from './pages/Register'
 import { CashRegister } from './pages/CashRegister'
+import { History } from './pages/History'
 import './index.css'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -29,10 +30,26 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <CashRegister />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/cash-register"
           element={
             <ProtectedRoute>
               <CashRegister />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/history"
+          element={
+            <ProtectedRoute>
+              <History />
             </ProtectedRoute>
           }
         />
