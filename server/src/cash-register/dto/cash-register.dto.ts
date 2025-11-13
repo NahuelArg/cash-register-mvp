@@ -5,6 +5,7 @@ import {
   IsEnum,
   IsString,
   IsOptional,
+  IsDateString,
 } from 'class-validator';
 
 export class OpenCashDto {
@@ -94,6 +95,20 @@ export class CashMovementResponseDto {
   createdAt: Date;
 }
 
+export class PaymentMethodBreakdown {
+  @ApiProperty({ example: 1200, description: 'Total en efectivo' })
+  cash: number;
+
+  @ApiProperty({ example: 800, description: 'Total con tarjeta' })
+  card: number;
+
+  @ApiProperty({ example: 500, description: 'Total por transferencia' })
+  transfer: number;
+
+  @ApiProperty({ example: 300, description: 'Total mixto' })
+  mixed: number;
+}
+
 export class CashClosingResponseDto {
   id: string;
   expectedBalance: number;
@@ -101,4 +116,70 @@ export class CashClosingResponseDto {
   difference: number;
   notes?: string;
   closedAt: Date;
+
+  @ApiPropertyOptional({ description: 'Desglose por método de pago' })
+  paymentBreakdown?: PaymentMethodBreakdown;
+
+  @ApiPropertyOptional({ example: 15, description: 'Cantidad de ventas' })
+  salesCount?: number;
+
+  @ApiPropertyOptional({ example: 3, description: 'Cantidad de egresos' })
+  expensesCount?: number;
+
+  @ApiPropertyOptional({ example: 2800, description: 'Total de ventas' })
+  totalSales?: number;
+
+  @ApiPropertyOptional({ example: 300, description: 'Total de egresos' })
+  totalExpenses?: number;
+
+  @ApiPropertyOptional({ description: 'Usuario que cerró la caja' })
+  closedBy?: {
+    id: string;
+    name: string;
+    email: string;
+  };
+
+  @ApiPropertyOptional({ description: 'Información de la caja registradora' })
+  cashRegister?: {
+    id: string;
+    openedAt: Date;
+    closedAt?: Date;
+  };
+}
+
+export class GetHistoryQueryDto {
+  @ApiPropertyOptional({
+    example: '2025-01-01',
+    description: 'Fecha de inicio (formato ISO 8601)',
+  })
+  @IsOptional()
+  @IsDateString()
+  startDate?: string;
+
+  @ApiPropertyOptional({
+    example: '2025-12-31',
+    description: 'Fecha de fin (formato ISO 8601)',
+  })
+  @IsOptional()
+  @IsDateString()
+  endDate?: string;
+
+  @ApiPropertyOptional({
+    enum: ['day', 'month', 'year'],
+    example: 'month',
+    description: 'Filtro rápido por período',
+  })
+  @IsOptional()
+  @IsEnum(['day', 'month', 'year'])
+  period?: 'day' | 'month' | 'year';
+
+  @ApiPropertyOptional({
+    example: 10,
+    description: 'Límite de resultados',
+    default: 10,
+  })
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  limit?: number;
 }

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { cashApi } from '../services/api';
+import { cashApi, type HistoryFilters } from '../services/api';
 
 interface Movement {
   id: string;
@@ -9,6 +9,37 @@ interface Movement {
   description?: string;
   category?: string;
   createdAt: string;
+}
+
+interface PaymentBreakdown {
+  cash: number;
+  card: number;
+  transfer: number;
+  mixed: number;
+}
+
+interface CashClosing {
+  id: string;
+  expectedBalance: number;
+  actualBalance: number;
+  difference: number;
+  notes?: string;
+  closedAt: string;
+  paymentBreakdown?: PaymentBreakdown;
+  salesCount?: number;
+  expensesCount?: number;
+  totalSales?: number;
+  totalExpenses?: number;
+  closedBy?: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  cashRegister?: {
+    id: string;
+    openedAt: string;
+    closedAt?: string;
+  };
 }
 
 interface CashStatus {
@@ -39,10 +70,12 @@ interface CashState {
     description?: string,
     category?: string
   ) => Promise<void>;
-  closeCash: (cashId: string, actualBalance: number, notes?: string) => Promise<any>;
-  getHistory: () => Promise<any>;
+  closeCash: (cashId: string, actualBalance: number, notes?: string) => Promise<CashClosing>;
+  getHistory: (filters?: HistoryFilters) => Promise<CashClosing[]>;
   reset: () => void;
 }
+
+export type { CashClosing, PaymentBreakdown, Movement };
 
 export const useCashStore = create<CashState>((set, get) => ({
   cash: null,
@@ -104,9 +137,9 @@ export const useCashStore = create<CashState>((set, get) => ({
     }
   },
 
-  getHistory: async () => {
+  getHistory: async (filters?: HistoryFilters) => {
     try {
-      const { data } = await cashApi.getHistory();
+      const { data } = await cashApi.getHistory(filters);
       return data;
     } catch (error) {
       set({ error: 'Error al obtener historial' });

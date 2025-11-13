@@ -32,12 +32,20 @@ export const CashRegister: React.FC = () => {
             {/* Header */}
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-4xl font-bold text-white">💰 Caja - {user?.name}</h1>
-                <button
-                    onClick={handleLogout}
-                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
-                >
-                    Cerrar Sesión
-                </button>
+                <div className="flex gap-3">
+                    <button
+                        onClick={() => navigate('/history')}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium"
+                    >
+                        📊 Historial de Cierres
+                    </button>
+                    <button
+                        onClick={handleLogout}
+                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
+                    >
+                        Cerrar Sesión
+                    </button>
+                </div>
             </div>
 
             {/* Big Balance */}

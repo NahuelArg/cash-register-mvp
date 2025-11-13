@@ -60,12 +60,24 @@ model CashClosing {
   id              String          @id @default(uuid())
   cashRegisterId  String
   cashRegister    CashRegister    @relation(fields: [cashRegisterId], references: [id])
-  
+
   expectedBalance Float
   actualBalance   Float
   difference      Float
   notes           String?
-  
+
+  // Payment method breakdown
+  totalCash       Float           @default(0)
+  totalCard       Float           @default(0)
+  totalTransfer   Float           @default(0)
+  totalMixed      Float           @default(0)
+
+  // Sales statistics
+  salesCount      Int             @default(0)
+  expensesCount   Int             @default(0)
+  totalSales      Float           @default(0)
+  totalExpenses   Float           @default(0)
+
   closedById      String
   closedBy        User            @relation(fields: [closedById], references: [id])
   closedAt        DateTime        @default(now())

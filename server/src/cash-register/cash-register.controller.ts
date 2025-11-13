@@ -6,6 +6,7 @@ import {
   UseGuards,
   BadRequestException,
   Param,
+  Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { CashRegisterService } from './cash-register.service';
@@ -18,6 +19,7 @@ import {
   CashStatusResponseDto,
   CashClosingResponseDto,
   CashMovementResponseDto,
+  GetHistoryQueryDto,
 } from './dto/cash-register.dto';
 
 @ApiTags('Cash Register')
@@ -73,13 +75,21 @@ export class CashRegisterController {
   }
 
   @Get('history')
-  @ApiOperation({ summary: 'Obtener historial de cierres' })
+  @ApiOperation({ summary: 'Obtener historial de cierres con filtros' })
   @ApiResponse({
     status: 200,
     type: [CashClosingResponseDto],
   })
-  async getHistory(@CurrentUser() user: { userId: string; email: string }) {
-    return this.service.getClosingsHistory(user.userId);
+  async getHistory(
+    @CurrentUser() user: { userId: string; email: string },
+    @Query() query: GetHistoryQueryDto,
+  ) {
+    return this.service.getClosingsHistory(user.userId, {
+      startDate: query.startDate,
+      endDate: query.endDate,
+      period: query.period,
+      limit: query.limit,
+    });
   }
 
   @Get('movements/:cashId')

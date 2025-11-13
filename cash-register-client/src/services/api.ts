@@ -26,6 +26,13 @@ export const authApi = {
         api.post('/auth/login', { email, password }),
 };
 
+export interface HistoryFilters {
+    startDate?: string;
+    endDate?: string;
+    period?: 'day' | 'month' | 'year';
+    limit?: number;
+}
+
 export const cashApi = {
     openCash: (openingBalance: number) =>
         api.post('/cash-register/open', { openingBalance }),
@@ -35,8 +42,8 @@ export const cashApi = {
         api.post('/cash-register/movement', { cashId, type, amount, paymentMethod, description, category }),
     closeCash: (cashId: string, actualBalance: number, notes?: string) =>
         api.post(`/cash-register/close/${cashId}`, { actualBalance, notes }),
-    getHistory: () =>
-        api.get('/cash-register/history'),
+    getHistory: (filters?: HistoryFilters) =>
+        api.get('/cash-register/history', { params: filters }),
     getMovements: (cashId: string) =>
         api.get(`/cash-register/movements/${cashId}`),
 };
