@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { cashApi, HistoryFilters } from '../services/api';
+import { cashApi, type HistoryFilters } from '../services/api';
 
 interface Movement {
   id: string;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useCashStore, CashClosing } from '../store/cashStore';
+import { useCashStore, type CashClosing } from '../store/cashStore';
 
 export const ClosingHistory: React.FC = () => {
     const [closings, setClosings] = useState<CashClosing[]>([]);
@@ -18,7 +18,7 @@ export const ClosingHistory: React.FC = () => {
             if (selectedPeriod === 'custom') {
                 if (startDate) filters.startDate = startDate;
                 if (endDate) filters.endDate = endDate;
-            } else if (selectedPeriod !== 'custom') {
+            } else {
                 filters.period = selectedPeriod;
             }
 
