@@ -93,7 +93,7 @@ export const CashRegister: React.FC = () => {
                         <h3 className="text-xl font-bold text-gray-900 mb-4">
                             Registrar Movimiento
                         </h3>
-                        <TransactionForm />
+                        <TransactionForm type='INCOME' />
                     </div>
                 </div>
 
