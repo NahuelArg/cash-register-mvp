@@ -117,13 +117,4 @@ export const useCashStore = create<CashState>((set, get) => ({
   reset: () => {
     set({ cash: null, error: null });
   },
-
-  balance: () => get().cash?.balance ?? 0,
-  isOpen: () => get().cash?.isOpen ?? false,
-  movements: () => get().cash?.movements ?? [],
-  fetchStatus: async () => {
-    await get().getStatus();
-  },
-
-  
 }));
