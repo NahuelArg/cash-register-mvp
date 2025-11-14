@@ -19,7 +19,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ type }) => {
         try {
             await createMovement(
                 cash.id,
-                type === 'INCOME' ? 'SALE' : 'EXPENSE',
+                transactionType === 'INCOME' ? 'SALE' : 'EXPENSE',
                 parseFloat(amount),
                 paymentMethod,
                 description,
@@ -52,7 +52,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ type }) => {
                 <button
                     type="button"
                     onClick={() => setTransactionType('EXPENSE')}
-                    className={`py-2 px-3 rounded-lg font-medium transition ${type === 'EXPENSE'
+                    className={`py-2 px-3 rounded-lg font-medium transition ${transactionType === 'EXPENSE'
                             ? 'bg-red-600 text-white'
                             : 'bg-gray-200 text-gray-800'
                         }`}
@@ -132,7 +132,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ type }) => {
             <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded-lg transition"
+                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded-lg"
             >
                 {isLoading ? 'Guardando...' : 'Guardar Movimiento'}
             </button>
