@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useCashStore } from '../store/cashStore';
+import { BarberSelector } from './BarberSelector';
 
 interface TransactionFormProps {
     type: "INCOME" | "EXPENSE";
@@ -10,6 +11,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ type }) => {
     const [paymentMethod, setPaymentMethod] = useState('CASH');
     const [description, setDescription] = useState('');
     const [category, setCategory] = useState('');
+    const [barberId, setBarberId] = useState('');
     const { cash, createMovement, isLoading, error } = useCashStore();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -23,11 +25,13 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ type }) => {
                 parseFloat(amount),
                 paymentMethod,
                 description,
-                category
+                category,
+                barberId || undefined
             );
             setAmount('');
             setDescription('');
             setCategory('');
+            setBarberId('');
         } catch {
             // Error handled by store
         }
@@ -94,6 +98,15 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ type }) => {
                     <option value="MIXED">Mixto</option>
                 </select>
             </div>
+
+            {/* Barber Selector - Only for INCOME */}
+            {transactionType === 'INCOME' && (
+                <BarberSelector
+                    value={barberId}
+                    onChange={setBarberId}
+                    required={true}
+                />
+            )}
 
             {/* Description */}
             <div>

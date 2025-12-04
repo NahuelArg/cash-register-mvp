@@ -49,6 +49,55 @@ export const ClosingForm: React.FC<ClosingFormProps> = ({
         return breakdown;
     }, [cash?.movements]);
 
+    // Calculate barber breakdown from current movements
+    const barberBreakdown = useMemo(() => {
+        if (!cash?.movements) return null;
+
+        const sales = cash.movements.filter(m => m.type === 'SALE' && m.barber);
+        const barberMap = new Map<string, any>();
+
+        sales.forEach(sale => {
+            if (!sale.barber) return;
+
+            const barberId = sale.barber.id;
+            if (!barberMap.has(barberId)) {
+                barberMap.set(barberId, {
+                    barberId: sale.barber.id,
+                    barberName: sale.barber.name,
+                    totalSales: 0,
+                    salesCount: 0,
+                    paymentBreakdown: {
+                        cash: 0,
+                        card: 0,
+                        transfer: 0,
+                        mixed: 0,
+                    },
+                });
+            }
+
+            const barberData = barberMap.get(barberId);
+            barberData.totalSales += sale.amount;
+            barberData.salesCount++;
+
+            switch (sale.paymentMethod) {
+                case 'CASH':
+                    barberData.paymentBreakdown.cash += sale.amount;
+                    break;
+                case 'CARD':
+                    barberData.paymentBreakdown.card += sale.amount;
+                    break;
+                case 'TRANSFER':
+                    barberData.paymentBreakdown.transfer += sale.amount;
+                    break;
+                case 'MIXED':
+                    barberData.paymentBreakdown.mixed += sale.amount;
+                    break;
+            }
+        });
+
+        return Array.from(barberMap.values());
+    }, [cash?.movements]);
+
     const handleClose = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -105,6 +154,46 @@ export const ClosingForm: React.FC<ClosingFormProps> = ({
                                 €{paymentBreakdown.mixed.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
                             </p>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Barber Breakdown */}
+            {barberBreakdown && barberBreakdown.length > 0 && (
+                <div className="bg-white p-4 rounded border border-gray-200">
+                    <h4 className="text-sm font-semibold text-gray-700 mb-3">✂️ Desglose por Barbero</h4>
+                    <div className="space-y-3">
+                        {barberBreakdown.map((barber) => (
+                            <div key={barber.barberId} className="bg-gray-50 p-3 rounded border border-gray-200">
+                                <div className="flex justify-between items-center mb-2">
+                                    <p className="font-semibold text-gray-800">{barber.barberName}</p>
+                                    <p className="text-lg font-bold text-blue-600">
+                                        €{barber.totalSales.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                                    </p>
+                                </div>
+                                <div className="text-xs text-gray-600 mb-2">
+                                    {barber.salesCount} {barber.salesCount === 1 ? 'corte' : 'cortes'}
+                                </div>
+                                <div className="grid grid-cols-4 gap-2 text-xs">
+                                    <div className="text-center">
+                                        <p className="text-gray-500">💵</p>
+                                        <p className="font-semibold">€{barber.paymentBreakdown.cash.toFixed(2)}</p>
+                                    </div>
+                                    <div className="text-center">
+                                        <p className="text-gray-500">💳</p>
+                                        <p className="font-semibold">€{barber.paymentBreakdown.card.toFixed(2)}</p>
+                                    </div>
+                                    <div className="text-center">
+                                        <p className="text-gray-500">🏦</p>
+                                        <p className="font-semibold">€{barber.paymentBreakdown.transfer.toFixed(2)}</p>
+                                    </div>
+                                    <div className="text-center">
+                                        <p className="text-gray-500">🔀</p>
+                                        <p className="font-semibold">€{barber.paymentBreakdown.mixed.toFixed(2)}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             )}

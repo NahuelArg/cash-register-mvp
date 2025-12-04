@@ -8,6 +8,11 @@ interface Movement {
   paymentMethod: string;
   description?: string;
   category?: string;
+  barberId?: string;
+  barber?: {
+    id: string;
+    name: string;
+  };
   createdAt: string;
 }
 
@@ -18,6 +23,14 @@ interface PaymentBreakdown {
   mixed: number;
 }
 
+interface BarberBreakdownItem {
+  barberId: string;
+  barberName: string;
+  totalSales: number;
+  salesCount: number;
+  paymentBreakdown?: PaymentBreakdown;
+}
+
 interface CashClosing {
   id: string;
   expectedBalance: number;
@@ -26,6 +39,7 @@ interface CashClosing {
   notes?: string;
   closedAt: string;
   paymentBreakdown?: PaymentBreakdown;
+  barberBreakdown?: BarberBreakdownItem[];
   salesCount?: number;
   expensesCount?: number;
   totalSales?: number;
@@ -68,14 +82,15 @@ interface CashState {
     amount: number,
     paymentMethod: string,
     description?: string,
-    category?: string
+    category?: string,
+    barberId?: string
   ) => Promise<void>;
   closeCash: (cashId: string, actualBalance: number, notes?: string) => Promise<CashClosing>;
   getHistory: (filters?: HistoryFilters) => Promise<CashClosing[]>;
   reset: () => void;
 }
 
-export type { CashClosing, PaymentBreakdown, Movement };
+export type { CashClosing, PaymentBreakdown, Movement, BarberBreakdownItem };
 
 export const useCashStore = create<CashState>((set, get) => ({
   cash: null,
@@ -108,10 +123,10 @@ export const useCashStore = create<CashState>((set, get) => ({
     }
   },
 
-  createMovement: async (cashId: string, type: 'SALE' | 'EXPENSE', amount: number, paymentMethod: string, description?: string, category?: string) => {
+  createMovement: async (cashId: string, type: 'SALE' | 'EXPENSE', amount: number, paymentMethod: string, description?: string, category?: string, barberId?: string) => {
     set({ isLoading: true, error: null });
     try {
-      await cashApi.createMovement(cashId, type, amount, paymentMethod, description, category);
+      await cashApi.createMovement(cashId, type, amount, paymentMethod, description, category, barberId);
       await get().getStatus();
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Error al registrar movimiento';

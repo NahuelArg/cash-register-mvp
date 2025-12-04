@@ -44,13 +44,16 @@ model CashMovement {
   id              String          @id @default(uuid())
   cashRegisterId  String
   cashRegister    CashRegister    @relation(fields: [cashRegisterId], references: [id])
-  
+
   type            String          // OPENING, SALE, EXPENSE
   amount          Float
   paymentMethod   String          // CASH, CARD, TRANSFER
   description     String?
   category        String?
-  
+
+  barberId        String?
+  barber          Barber?         @relation(fields: [barberId], references: [id])
+
   createdById     String
   createdBy       User            @relation(fields: [createdById], references: [id])
   createdAt       DateTime        @default(now())
@@ -78,7 +81,20 @@ model CashClosing {
   totalSales      Float           @default(0)
   totalExpenses   Float           @default(0)
 
+  // Barber breakdown
+  barberBreakdown Json?
+
   closedById      String
   closedBy        User            @relation(fields: [closedById], references: [id])
   closedAt        DateTime        @default(now())
+}
+
+model Barber {
+  id              String          @id @default(uuid())
+  name            String
+  isOwner         Boolean         @default(false)
+  isActive        Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+
+  movements       CashMovement[]
 }

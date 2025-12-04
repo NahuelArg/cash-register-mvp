@@ -38,14 +38,16 @@ export const cashApi = {
         api.post('/cash-register/open', { openingBalance }),
     getStatus: () =>
         api.get('/cash-register/status'),
-    createMovement: (cashId: string, type: 'SALE' | 'EXPENSE', amount: number, paymentMethod: string, description?: string, category?: string) =>
-        api.post('/cash-register/movement', { cashId, type, amount, paymentMethod, description, category }),
+    createMovement: (cashId: string, type: 'SALE' | 'EXPENSE', amount: number, paymentMethod: string, description?: string, category?: string, barberId?: string) =>
+        api.post('/cash-register/movement', { cashId, type, amount, paymentMethod, description, category, barberId }),
     closeCash: (cashId: string, actualBalance: number, notes?: string) =>
         api.post(`/cash-register/close/${cashId}`, { actualBalance, notes }),
     getHistory: (filters?: HistoryFilters) =>
         api.get('/cash-register/history', { params: filters }),
     getMovements: (cashId: string) =>
         api.get(`/cash-register/movements/${cashId}`),
+    getBarbers: () =>
+        api.get('/cash-register/barbers'),
 };
 
 export default api;

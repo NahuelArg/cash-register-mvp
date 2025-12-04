@@ -52,6 +52,14 @@ export class CreateMovementDto {
   @IsOptional()
   @IsString()
   category?: string;
+
+  @ApiPropertyOptional({
+    example: 'uuid-del-barbero',
+    description: 'ID del barbero (requerido para SALE, opcional para EXPENSE)',
+  })
+  @IsOptional()
+  @IsString()
+  barberId?: string;
 }
 
 export class CloseCashDto {
@@ -92,6 +100,11 @@ export class CashMovementResponseDto {
   paymentMethod: string;
   description?: string;
   category?: string;
+  barberId?: string;
+  barber?: {
+    id: string;
+    name: string;
+  };
   createdAt: Date;
 }
 
@@ -107,6 +120,23 @@ export class PaymentMethodBreakdown {
 
   @ApiProperty({ example: 300, description: 'Total mixto' })
   mixed: number;
+}
+
+export class BarberBreakdownItem {
+  @ApiProperty({ example: 'uuid-barbero', description: 'ID del barbero' })
+  barberId: string;
+
+  @ApiProperty({ example: 'Barbero 1', description: 'Nombre del barbero' })
+  barberName: string;
+
+  @ApiProperty({ example: 1200, description: 'Total de ventas del barbero' })
+  totalSales: number;
+
+  @ApiProperty({ example: 8, description: 'Cantidad de ventas del barbero' })
+  salesCount: number;
+
+  @ApiPropertyOptional({ description: 'Desglose por método de pago' })
+  paymentBreakdown?: PaymentMethodBreakdown;
 }
 
 export class CashClosingResponseDto {
@@ -131,6 +161,9 @@ export class CashClosingResponseDto {
 
   @ApiPropertyOptional({ example: 300, description: 'Total de egresos' })
   totalExpenses?: number;
+
+  @ApiPropertyOptional({ description: 'Desglose por barbero', type: [BarberBreakdownItem] })
+  barberBreakdown?: BarberBreakdownItem[];
 
   @ApiPropertyOptional({ description: 'Usuario que cerró la caja' })
   closedBy?: {

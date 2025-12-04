@@ -305,6 +305,58 @@ export const ClosingHistory: React.FC = () => {
                                     </div>
                                 )}
 
+                                {/* Barber Breakdown */}
+                                {selectedClosing.barberBreakdown && selectedClosing.barberBreakdown.length > 0 && (
+                                    <div>
+                                        <h4 className="text-lg font-semibold text-gray-900 mb-3">
+                                            ✂️ Desglose por Barbero
+                                        </h4>
+                                        <div className="space-y-3">
+                                            {selectedClosing.barberBreakdown.map((barber) => (
+                                                <div key={barber.barberId} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                                    <div className="flex justify-between items-center mb-3">
+                                                        <p className="text-lg font-semibold text-gray-800">{barber.barberName}</p>
+                                                        <p className="text-xl font-bold text-blue-600">
+                                                            {formatCurrency(barber.totalSales)}
+                                                        </p>
+                                                    </div>
+                                                    <div className="text-sm text-gray-600 mb-3">
+                                                        {barber.salesCount} {barber.salesCount === 1 ? 'corte' : 'cortes'}
+                                                    </div>
+                                                    {barber.paymentBreakdown && (
+                                                        <div className="grid grid-cols-4 gap-2">
+                                                            <div className="bg-white p-2 rounded text-center">
+                                                                <p className="text-xs text-gray-500">💵</p>
+                                                                <p className="text-sm font-semibold">
+                                                                    {formatCurrency(barber.paymentBreakdown.cash)}
+                                                                </p>
+                                                            </div>
+                                                            <div className="bg-white p-2 rounded text-center">
+                                                                <p className="text-xs text-gray-500">💳</p>
+                                                                <p className="text-sm font-semibold">
+                                                                    {formatCurrency(barber.paymentBreakdown.card)}
+                                                                </p>
+                                                            </div>
+                                                            <div className="bg-white p-2 rounded text-center">
+                                                                <p className="text-xs text-gray-500">🏦</p>
+                                                                <p className="text-sm font-semibold">
+                                                                    {formatCurrency(barber.paymentBreakdown.transfer)}
+                                                                </p>
+                                                            </div>
+                                                            <div className="bg-white p-2 rounded text-center">
+                                                                <p className="text-xs text-gray-500">🔀</p>
+                                                                <p className="text-sm font-semibold">
+                                                                    {formatCurrency(barber.paymentBreakdown.mixed)}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
                                 {/* Statistics */}
                                 <div className="grid grid-cols-2 gap-3">
                                     <div className="bg-green-50 p-3 rounded-lg">
