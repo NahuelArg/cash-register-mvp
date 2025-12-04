@@ -12,7 +12,7 @@ async function bootstrap() {
     : ['http://localhost:5173'];
 
   app.enableCors({
-    origin: (origin, callback) => {
+   /* origin: (origin, callback) => {
       // Allow requests with no origin (mobile apps, Postman, etc.)
       if (!origin) return callback(null, true);
 
@@ -22,7 +22,9 @@ async function bootstrap() {
         console.warn(`CORS: Blocked origin ${origin}`);
         callback(new Error('Not allowed by CORS'));
       }
-    },
+    },*/
+    origin:'*',
+
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
