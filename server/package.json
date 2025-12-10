@@ -20,6 +20,7 @@
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
     "prisma:seed": "ts-node prisma/seed.ts",
+    "seed": "ts-node prisma/seed.ts",
     "migrate:deploy": "prisma migrate deploy",
     "test": "jest",
     "test:watch": "jest --watch",
