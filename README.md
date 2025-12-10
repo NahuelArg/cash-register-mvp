@@ -1,29 +1,37 @@
-# Cash Register MVP 💰
+# Sistema de Caja Registradora
 
-Sistema de gestión de caja diseñado específicamente para barberías y pequeños negocios, con enfoque en simplicidad y eficiencia.
+Sistema profesional de gestión de caja diseñado específicamente para barberías y pequeños negocios, con enfoque en simplicidad, eficiencia y control detallado.
 
-![Estado del Proyecto](https://img.shields.io/badge/estado-completado-success)
-![Versión](https://img.shields.io/badge/versión-1.0.0-blue)
+![Estado del Proyecto](https://img.shields.io/badge/estado-producción-success)
+![Versión](https://img.shields.io/badge/versión-2.0.0-blue)
 ![Licencia](https://img.shields.io/badge/licencia-MIT-green)
 
 ## ✨ Características Principales
 
-🔐 **Gestión de Usuarios**
+### 🔐 Gestión de Usuarios
 - Registro y autenticación segura
-- Roles y permisos
 - Gestión de sesiones con JWT
+- Control de acceso basado en roles
 
-💰 **Control de Caja**
-- Apertura y cierre de caja con balance
-- Registro detallado de movimientos
+### 💰 Control de Caja
+- Apertura y cierre de caja con balance automático
+- Registro detallado de ingresos y egresos
 - Categorización de transacciones
-- Multi-método de pago (efectivo, tarjeta, transferencia)
+- Multi-método de pago (efectivo, tarjeta, transferencia, mixto)
+- Cálculo automático de diferencias
 
-📊 **Dashboard y Reportes**
+### 👤 Gestión de Barberos
+- Tracking individual por barbero/profesional
+- Desglose de ventas por barbero en cierres de caja
+- Identificación del propietario
+- Métricas de rendimiento por profesional
+
+### 📊 Dashboard y Reportes
 - Balance en tiempo real
-- Historial de movimientos
-- Reportes de cierre detallados
-- Diferencias de caja automatizadas
+- Historial completo de movimientos
+- Reportes de cierre con breakdown por barbero
+- Estadísticas de métodos de pago
+- Resúmenes diarios, mensuales y anuales
 
 ## 🖼️ Screenshots
 ![alt text](<Screenshot 2025-11-07 144008.png>)
@@ -39,72 +47,98 @@ Sistema de gestión de caja diseñado específicamente para barberías y pequeñ
 ## 🛠️ Stack Tecnológico
 
 ### Frontend
-- ⚛️ **React 18** - Framework UI
+- ⚛️ **React 19** - Framework UI moderno
 - 📘 **TypeScript** - Tipado estático
-- 🎯 **Zustand** - Gestión de estado
-- 🎨 **TailwindCSS** - Estilos
-- ⚡ **Vite** - Build tool
+- 🎯 **Zustand** - Gestión de estado ligera
+- 🎨 **TailwindCSS** - Sistema de diseño corporativo
+- ⚡ **Vite** - Build tool ultrarrápido
+- 🚦 **React Router 7** - Navegación
 
 ### Backend
-- 🦕 **NestJS** - Framework Backend
-- 💾 **Prisma ORM** - Base de datos
-- 🗄️ **MySQL** - Base de datos
-- 🔑 **JWT** - Autenticación
-- 📚 **Swagger** - Documentación API
+- 🦕 **NestJS** - Framework empresarial Node.js
+- 💾 **Prisma ORM** - ORM type-safe
+- 🗄️ **PostgreSQL** - Base de datos relacional
+- 🔑 **JWT** - Autenticación stateless
+- 🔐 **bcrypt** - Hashing de contraseñas
+- 🛡️ **Class Validator** - Validación de DTOs
 
 ## 🚀 Instalación y Uso
 
 ### Pre-requisitos
-- Node.js >= 18
-- MySQL >= 8.0
-- npm o yarn
+- Node.js >= 20.x
+- PostgreSQL >= 14 (o MySQL >= 8.0)
+- npm >= 9.0
 
 ### Configuración del Proyecto
 
 1. **Clonar el repositorio**
-\`\`\`bash
+```bash
 git clone https://github.com/NahuelArg/cash-register-mvp.git
 cd cash-register-mvp
-\`\`\`
+```
 
 2. **Configurar Backend**
-\`\`\`bash
+```bash
 cd server
 npm install
 
 # Configurar variables de entorno
 cp .env.example .env
 # Editar .env con tus credenciales de BD
+# Ejemplo: DATABASE_URL="postgresql://user:password@localhost:5432/cash_register"
+
+# Ejecutar migraciones
+npx prisma migrate deploy
+
+# Crear datos iniciales (3 barberos)
+npm run seed
 
 # Iniciar servidor de desarrollo
 npm run start:dev
-\`\`\`
+```
 
 3. **Configurar Frontend**
-\`\`\`bash
+```bash
 cd ../cash-register-client
 npm install
+
+# Configurar variables de entorno
+echo "VITE_API_URL=http://localhost:3000" > .env
+
+# Iniciar en modo desarrollo
 npm run dev
-\`\`\`
+```
 
-## 📚 Documentación
+4. **Acceder a la aplicación**
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:3000
+- API Docs (Swagger): http://localhost:3000/api
 
-- [Documentación Frontend](./cash-register-client/README.md)
-- [Documentación Backend](./server/README.md)
-- [API Docs](http://localhost:3000/api) (Swagger UI disponible al iniciar el servidor)
+## 📚 Documentación API
+
+La documentación interactiva de la API está disponible en `/api` cuando el servidor está corriendo:
+- **Swagger UI**: http://localhost:3000/api
+- **Endpoints principales**:
+  - `POST /auth/register` - Registro de usuarios
+  - `POST /auth/login` - Autenticación
+  - `GET /cash-register/status` - Estado de caja
+  - `POST /cash-register/open` - Abrir caja
+  - `POST /cash-register/movement` - Registrar movimiento
+  - `POST /cash-register/close` - Cerrar caja
+  - `GET /cash-register/barbers` - Lista de barberos
 
 ## 🧪 Tests
 
-\`\`\`bash
+```bash
 # Backend tests
 cd server
 npm run test        # Unit tests
-npm run test:e2e    # E2E tests
+npm run test:cov    # Coverage
 
 # Frontend tests
 cd cash-register-client
 npm run test
-\`\`\`
+```
 
 ## 🤝 Contribuir
 
