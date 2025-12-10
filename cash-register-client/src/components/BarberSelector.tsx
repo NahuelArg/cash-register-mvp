@@ -34,30 +34,40 @@ export const BarberSelector: React.FC<BarberSelectorProps> = ({ value, onChange,
 
   if (loading) {
     return (
-      <div className="animate-pulse">
-        <div className="h-10 bg-gray-200 rounded"></div>
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
+          👤 Barbero {required && <span className="text-danger-500">*</span>}
+        </label>
+        <div className="animate-pulse">
+          <div className="h-12 bg-gradient-to-r from-gray-200 to-gray-300 rounded-xl"></div>
+        </div>
       </div>
     );
   }
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">
-        Barbero {required && <span className="text-red-500">*</span>}
+      <label className="block text-sm font-semibold text-gray-700 mb-2">
+        👤 Barbero {required && <span className="text-danger-500">*</span>}
       </label>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        required={required}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        <option value="">Seleccionar barbero...</option>
-        {barbers.map((barber) => (
-          <option key={barber.id} value={barber.id}>
-            {barber.name} {barber.isOwner ? '(Dueño)' : ''}
-          </option>
-        ))}
-      </select>
+      <div className="relative">
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          required={required}
+          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all duration-200 bg-white appearance-none cursor-pointer"
+        >
+          <option value="">Seleccionar barbero...</option>
+          {barbers.map((barber) => (
+            <option key={barber.id} value={barber.id}>
+              {barber.isOwner ? '👑 ' : '✂️ '}{barber.name} {barber.isOwner ? '(Dueño)' : ''}
+            </option>
+          ))}
+        </select>
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+          ▼
+        </div>
+      </div>
     </div>
   );
 };
