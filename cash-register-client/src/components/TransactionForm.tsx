@@ -40,45 +40,45 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ type }) => {
     const [transactionType, setTransactionType] = useState<"INCOME" | "EXPENSE">(type);
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-4">
             {/* Type Selection */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2">
                 <button
                     type="button"
                     onClick={() => setTransactionType('INCOME')}
-                    className={`py-3 px-4 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 ${transactionType === 'INCOME'
-                            ? 'bg-gradient-to-r from-success-500 to-success-600 text-white shadow-lg'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    className={`py-2.5 px-4 rounded-lg font-medium transition-colors duration-150 ${transactionType === 'INCOME'
+                            ? 'bg-success-600 text-white'
+                            : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
                         }`}
                 >
-                    💰 Ingreso
+                    Ingreso
                 </button>
                 <button
                     type="button"
                     onClick={() => setTransactionType('EXPENSE')}
-                    className={`py-3 px-4 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 ${transactionType === 'EXPENSE'
-                            ? 'bg-gradient-to-r from-danger-500 to-danger-600 text-white shadow-lg'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    className={`py-2.5 px-4 rounded-lg font-medium transition-colors duration-150 ${transactionType === 'EXPENSE'
+                            ? 'bg-danger-600 text-white'
+                            : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
                         }`}
                 >
-                    💸 Egreso
+                    Egreso
                 </button>
             </div>
 
             {/* Amount */}
             <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Monto (€)
+                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    Monto <span className="text-danger-500">*</span>
                 </label>
                 <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">€</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500 font-medium">€</span>
                     <input
                         type="number"
                         step="0.01"
                         min="0"
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
-                        className="w-full pl-8 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                        className="w-full pl-8 pr-4 py-2.5 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-150"
                         placeholder="0.00"
                         required
                     />
@@ -87,18 +87,18 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ type }) => {
 
             {/* Payment Method */}
             <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Método de Pago
+                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    Método de Pago <span className="text-danger-500">*</span>
                 </label>
                 <select
                     value={paymentMethod}
                     onChange={(e) => setPaymentMethod(e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 bg-white"
+                    className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-150 bg-white"
                 >
-                    <option value="CASH">💵 Efectivo</option>
-                    <option value="CARD">💳 Tarjeta</option>
-                    <option value="TRANSFER">🏦 Transferencia</option>
-                    <option value="MIXED">🔀 Mixto</option>
+                    <option value="CASH">Efectivo</option>
+                    <option value="CARD">Tarjeta</option>
+                    <option value="TRANSFER">Transferencia</option>
+                    <option value="MIXED">Mixto</option>
                 </select>
             </div>
 
@@ -113,35 +113,37 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ type }) => {
 
             {/* Description */}
             <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Descripción (Opcional)
+                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    Descripción
                 </label>
                 <input
                     type="text"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-                    placeholder="Ej: Corte de cabello"
+                    className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-150"
+                    placeholder="Descripción del movimiento"
                 />
             </div>
 
             {/* Category */}
             <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Categoría (Opcional)
+                <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    Categoría
                 </label>
                 <input
                     type="text"
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-                    placeholder="Ej: Servicios"
+                    className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-150"
+                    placeholder="Categoría contable"
                 />
             </div>
 
             {error && (
-                <div className="p-4 bg-danger-50 border-l-4 border-danger-500 text-danger-700 text-sm rounded-xl flex items-center gap-2">
-                    <span>⚠️</span>
+                <div className="p-3 bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg flex items-center gap-2">
+                    <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
                     <span className="font-medium">{error}</span>
                 </div>
             )}
@@ -149,19 +151,9 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ type }) => {
             <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 disabled:hover:scale-100 disabled:cursor-not-allowed"
+                className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-400 text-white font-semibold py-3 px-4 rounded-lg shadow-subtle transition-colors duration-150 disabled:cursor-not-allowed"
             >
-                {isLoading ? (
-                    <span className="flex items-center justify-center gap-2">
-                        <span className="animate-spin">⏳</span>
-                        Guardando...
-                    </span>
-                ) : (
-                    <span className="flex items-center justify-center gap-2">
-                        <span>✓</span>
-                        Guardar Movimiento
-                    </span>
-                )}
+                {isLoading ? 'Procesando...' : 'Guardar Movimiento'}
             </button>
         </form>
     );
