@@ -71,6 +71,25 @@ export class CashRegisterService {
       throw new NotFoundException('Caja no encontrada o cerrada');
     }
 
+    // Validar barberId es requerido para SALE
+    if (dto.type === 'SALE' && !dto.barberId) {
+      throw new BadRequestException('El barbero es requerido para ventas');
+    }
+
+    // Validar que el barbero existe y está activo si se proporciona barberId
+    if (dto.barberId) {
+      const barber = await this.prisma.barber.findFirst({
+        where: {
+          id: dto.barberId,
+          isActive: true,
+        },
+      });
+
+      if (!barber) {
+        throw new NotFoundException('Barbero no encontrado o inactivo');
+      }
+    }
+
     // Calcular nuevo balance
     const amount = dto.type === 'SALE' ? dto.amount : -dto.amount;
     const newBalance = cash.balance + amount;
@@ -85,6 +104,7 @@ export class CashRegisterService {
           paymentMethod: dto.paymentMethod,
           description: dto.description,
           category: dto.category,
+          barberId: dto.barberId,
           createdById: userId,
         },
       });
@@ -103,6 +123,14 @@ export class CashRegisterService {
       where: { userId, status: 'OPEN' },
       include: {
         movements: {
+          include: {
+            barber: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
           orderBy: { createdAt: 'desc' },
         },
       },
@@ -188,6 +216,69 @@ export class CashRegisterService {
     };
   }
 
+  private async calculateBarberBreakdown(cashId: string) {
+    const movements = await this.prisma.cashMovement.findMany({
+      where: {
+        cashRegisterId: cashId,
+        type: 'SALE',
+        barberId: { not: null },
+      },
+      include: {
+        barber: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    // Agrupar por barbero
+    const barberMap = new Map<string, any>();
+
+    movements.forEach((movement) => {
+      if (!movement.barber) return;
+
+      const barberId = movement.barber.id;
+      if (!barberMap.has(barberId)) {
+        barberMap.set(barberId, {
+          barberId: movement.barber.id,
+          barberName: movement.barber.name,
+          totalSales: 0,
+          salesCount: 0,
+          paymentBreakdown: {
+            cash: 0,
+            card: 0,
+            transfer: 0,
+            mixed: 0,
+          },
+        });
+      }
+
+      const barberData = barberMap.get(barberId);
+      barberData.totalSales += movement.amount;
+      barberData.salesCount++;
+
+      // Desglose por método de pago
+      switch (movement.paymentMethod) {
+        case 'CASH':
+          barberData.paymentBreakdown.cash += movement.amount;
+          break;
+        case 'CARD':
+          barberData.paymentBreakdown.card += movement.amount;
+          break;
+        case 'TRANSFER':
+          barberData.paymentBreakdown.transfer += movement.amount;
+          break;
+        case 'MIXED':
+          barberData.paymentBreakdown.mixed += movement.amount;
+          break;
+      }
+    });
+
+    return Array.from(barberMap.values());
+  }
+
   async closeCash(userId: string, cashId: string, dto: CloseCashDto) {
     const cash = await this.prisma.cashRegister.findFirst({
       where: { id: cashId, userId, status: 'OPEN' },
@@ -202,6 +293,7 @@ export class CashRegisterService {
     // Calcular estadísticas
     const paymentBreakdown = await this.calculatePaymentBreakdown(cashId);
     const expensesStats = await this.calculateExpensesStats(cashId);
+    const barberBreakdown = await this.calculateBarberBreakdown(cashId);
 
     return this.prisma.$transaction(async (tx) => {
       const closing = await tx.cashClosing.create({
@@ -223,6 +315,8 @@ export class CashRegisterService {
           totalSales: paymentBreakdown.totalSales,
           expensesCount: expensesStats.expensesCount,
           totalExpenses: expensesStats.totalExpenses,
+          // Barber breakdown
+          barberBreakdown: barberBreakdown.length > 0 ? barberBreakdown : undefined,
         },
         include: {
           closedBy: {
@@ -344,7 +438,22 @@ export class CashRegisterService {
 
     return this.prisma.cashMovement.findMany({
       where: { cashRegisterId: cashId },
+      include: {
+        barber: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
       orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async getAllBarbers() {
+    return this.prisma.barber.findMany({
+      where: { isActive: true },
+      orderBy: { name: 'asc' },
     });
   }
 }

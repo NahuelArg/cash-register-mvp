@@ -101,4 +101,11 @@ export class CashRegisterController {
   ) {
     return this.service.getAllMovements(user.userId, cashId);
   }
+
+  @Get('barbers')
+  @ApiOperation({ summary: 'Obtener lista de barberos activos' })
+  @ApiResponse({ status: 200, description: 'Lista de barberos' })
+  async getBarbers() {
+    return this.service.getAllBarbers();
+  }
 }
