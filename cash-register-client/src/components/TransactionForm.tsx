@@ -21,7 +21,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ type }) => {
         try {
             await createMovement(
                 cash.id,
-                type === 'INCOME' ? 'SALE' : 'EXPENSE',
+                transactionType === 'INCOME' ? 'SALE' : 'EXPENSE',
                 parseFloat(amount),
                 paymentMethod,
                 description,

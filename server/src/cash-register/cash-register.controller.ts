@@ -74,6 +74,8 @@ export class CashRegisterController {
     return this.service.closeCash(user.userId, cashId, dto);
   }
 
+
+
   @Get('history')
   @ApiOperation({ summary: 'Obtener historial de cierres con filtros' })
   @ApiResponse({
