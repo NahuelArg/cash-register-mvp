@@ -71,11 +71,6 @@ export class CashRegisterService {
       throw new NotFoundException('Caja no encontrada o cerrada');
     }
 
-    // Validar barberId es requerido para SALE
-    if (dto.type === 'SALE' && !dto.barberId) {
-      throw new BadRequestException('El barbero es requerido para ventas');
-    }
-
     // Validar que el barbero existe y está activo si se proporciona barberId
     if (dto.barberId) {
       const barber = await this.prisma.barber.findFirst({
